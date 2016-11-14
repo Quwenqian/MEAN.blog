@@ -1,0 +1,65 @@
+<!-- Page Header -->
+<!-- Set your background image for this header on the line below. -->
+<header class="intro-header" style="background-image: url(/img/post-bg.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>文章发布</h1>
+                    <hr class="small">
+                    <span class="subheading">用文字分享你的世界吧</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <form name="articleForm" ng-submit="articleForm.$valid && submitArticle()" novalidate>
+                <div class="row control-group">
+                    <div class="form-group col-xs-12">
+                        <label><i class="fa fa-hashtag fa-lg fa-fw" aria-hidden="true"></i>&nbsp;文章标题</label>
+                        <input type="text" class="form-control input-lg" placeholder="文章标题" name="title" ng-model="article.title" required ng-maxlength="36">
+                        <div class="message">
+                            <p class="help-block" ng-show="articleForm.title.$dirty && articleForm.title.$error.required">请填写文章标题</p>
+                            <p class="help-block" ng-show="articleForm.title.$dirty && articleForm.title.$error.maxlength">文章标题最多36个字符</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row control-group">
+                    <div class="form-group col-xs-12">
+                        <label><i class="fa fa-address-book fa-lg fa-fw" aria-hidden="true"></i>&nbsp;文章作者</label>
+                        <input type="text" class="form-control input-lg" placeholder="文章作者" name="author" ng-model="article.author" required ng-maxlength="20">
+                        <div class="message">
+                            <p class="help-block" ng-show="articleForm.author.$dirty && articleForm.author.$error.required">请填写文章作者</p>
+                            <p class="help-block" ng-show="articleForm.author.$dirty && articleForm.author.$error.maxlength">作者名称最多20个字符</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row control-group">
+                    <div class="form-group col-xs-12">
+                        <label><i class="fa fa-quote-left fa-lg fa-fw" aria-hidden="true"></i>&nbsp;文章内容</label>
+                        <div id="editormd"><textarea rows="6" class="form-control input-lg hidden" placeholder="文章内容" name="content" ng-model="article.content" required></textarea></div>
+                        <div class="message">
+                            <p class="help-block" ng-show="articleForm.content.$dirty && articleForm.content.$error.required">请填写文章内容</p>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="success"></div>
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        <button type="submit" class="btn btn-default"
+                                ng-disabled="articleForm.$invalid || articleForm.$pending"
+                        ><i class="fa fa-paper-plane fa-lg" aria-hidden="true"
+                            ng-class="{'fa-paper-plane': !articleForm.$pending, 'fa-circle-o-notch fa-spin': articleForm.$pending}"
+                        ></i>&nbsp;&nbsp;发布</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

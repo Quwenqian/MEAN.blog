@@ -1,0 +1,210 @@
+$danger: #d33;
+$primary: #0085a1;
+$mute: #7f8c8d;
+$fontFamily: "Microsoft Yahei", 微软雅黑, STHeiti, 华文细黑, sans-serif, verdana, Arial;
+
+body, body h1, body h2, body h3, body h4, body h5, body h6, input, textarea, .swal2-modal, .swal2-modal > h2 {
+    font-family: $fontFamily !important;
+}
+
+a, a:hover, a:focus {
+    text-decoration: none !important;
+}
+
+// 主体内容样式
+main.main-content {
+    position: relative;
+    min-height: calc(100vh - 260px);
+    img {
+        max-width: 100%;
+        border: 0;
+        border-radius: 6px;
+    }
+    iframe {
+        min-width: 100%;
+        max-width: 100%;
+        border: 0;
+    }
+}
+
+// 分页样式
+.pager > li { margin: 0 5px; }
+.pager .active {
+    & > a,
+    & > a:hover,
+    & > a:focus,
+    & > span {
+        color: white;
+        background-color: $primary;
+        border: 1px solid $primary;
+    }
+}
+
+nav a.active {
+    &, &:hover, &:focus { color: $primary !important; }
+}
+
+.meta > a, .post-meta > a.list-group-item-text > a {
+    font-weight: bold !important;
+}
+
+// 文章列表样式
+.article-list {
+    .list-group-item { padding: 18px 80px 18px 24px; }
+
+    .list-group-item-heading, .list-group-item-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 24px;
+    }
+
+    .list-group-item-text { color: $mute; margin: 20px 0 0; font-size: 18px; }
+
+    .delete-btn {
+        position: absolute;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        &:hover, &:focus { color: $danger; }
+    }
+}
+
+// 表单验证类样式
+form {
+    textarea { resize: vertical; }
+
+    #editormd {
+        border-radius: 6px;
+    }
+
+    .ng-invalid.ng-dirty:not(:focus) {
+        border-bottom: 1px dashed $danger;
+        animation-name: headShake;
+        animation-duration: 1s;
+        animation-fill-mode: both;
+    }
+
+    .message { min-height: 36px; overflow: hidden; }
+
+    .help-block {
+        color: $danger;
+        font-size: 16px;
+        &.ng-hide-remove { animation: fadeInUp .4s both; }
+        &.ng-hide-add { animation: fadeOutDown .4s both; }
+    }
+
+    .fa-circle-o-notch.fa-spin { color: $primary; }
+}
+
+// 列表动画
+.post-preview {
+    &.ng-enter {
+        animation: bounceIn 1s both;
+    }
+    &.ng-enter-stagger {
+        animation-delay: 0.1s;
+    }
+}
+
+.article-list > .list-group-item {
+    &.ng-enter {
+        animation: bounceInUp 1s both;
+    }
+    &.ng-enter-stagger {
+        animation-delay: 0.1s;
+    }
+
+    &.ng-leave {
+        animation: zoomOutLeft 1s both;
+    }
+    &.ng-leave-stagger {
+        animation-delay: 0.1s;
+    }
+    &.ng-leave ~ .list-group-item:not(.ng-leave) {
+        animation: slideUp .8s both ease;
+    }
+
+    &.ng-move {
+        animation: zoomIn 1s both;
+    }
+    &.ng-move-stagger {
+        animation-delay: 0.1s;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, -100%, 0);
+    }
+}
+
+// 文章详情样式
+#article-content {
+    p {
+        font-size: 16px;
+        font-family: $fontFamily;
+        line-height: 1.5;
+        margin: 30px 0 !important;
+        color: #333;
+    }
+}
+
+// Code Prettyify 代码美化样式
+pre.prettyprint {
+    background: #2f3640;
+    font-family: Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, Consolas, monospace;
+    border: 0 !important;
+}
+
+pre .nocode { background-color: none; color: #000 }
+
+pre .pln { color: #e6e9ed; }
+
+ol.linenums {
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #656d78;
+}
+
+li.L0,li.L1,li.L2,li.L3,li.L4,li.L5,li.L6,li.L7,li.L8,li.L9 {
+    padding-left: 1em;
+    background-color: #2f3640;
+    list-style-type: decimal;
+}
+
+@media screen {
+    pre .str { color: #ffce54; }
+    pre .kwd { color: #4fc1e9; }
+    pre .com { color: #656d78; }
+    pre .typ { color: #4fc1e9; }
+    pre .lit { color: #ac92ec; }
+    pre .pun { color: #e6e9ed; }
+    pre .opn { color: #e6e9ed; }
+    pre .clo { color: #e6e9ed; }
+    pre .tag { color: #ed5565; }
+    pre .atn { color: #a0d468; }
+    pre .atv { color: #ffce54; }
+    pre .dec { color: #ac92ec; }
+    pre .var { color: #e6e9ed; }
+    pre .fun { color: #e6e9ed; }
+}
+
+@media print {
+    pre.prettyprint { background-color: none }
+    pre .str, code .str { color: #060 }
+    pre .kwd, code .kwd { color: #006; font-weight: bold }
+    pre .com, code .com { color: #600; font-style: italic }
+    pre .typ, code .typ { color: #404; font-weight: bold }
+    pre .lit, code .lit { color: #044 }
+    pre .pun, code .pun { color: #440 }
+    pre .pln, code .pln { color: #000 }
+    pre .tag, code .tag { color: #006; font-weight: bold }
+    pre .atn, code .atn { color: #404 }
+    pre .atv, code .atv { color: #060 }
+}

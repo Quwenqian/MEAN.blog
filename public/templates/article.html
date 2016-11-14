@@ -1,0 +1,34 @@
+<!-- Page Header -->
+<!-- Set your background image for this header on the line below. -->
+<header class="intro-header" style="background-image: url(/img/about-bg.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>{{article.title}}</h1>
+                    <h2 class="subheading">{{article.summary}}</h2>
+                    <span class="meta"><i class="fa fa-address-book fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;<a ui-sref="list({keywords: article.author})">{{article.author}}</a>&nbsp;发布于 <time>{{article.createdAt | date: "yyyy-MM-dd HH:mm:ss"}}</time></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Article Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div id="article-content"></div>
+
+                <hr>
+
+                <!-- Pager -->
+                <ul ng-if="article.prev || article.next" class="pager">
+                    <li ng-if="article.prev" class="previous"><a ui-sref="article({id: article.prev._id})" title="{{article.prev.title}}">上一篇</a></li>
+                    <li ng-if="article.next" class="next"><a ui-sref="article({id: article.next._id})" title="{{article.next.title}}">下一篇</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</article>

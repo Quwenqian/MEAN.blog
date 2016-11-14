@@ -1,0 +1,38 @@
+<!-- Page Header -->
+<!-- Set your background image for this header on the line below. -->
+<header class="intro-header" style="background-image: url(/img/contact-bg.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>文章列表</h1>
+                    <hr class="small">
+                    <span class="subheading">管理和阅读所有的文章</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <ul class="list-group article-list" ng-animate-children>
+                <li ng-repeat="article in articles track by article._id" class="list-group-item clearfix">
+                    <h4 class="list-group-item-heading"><a ui-sref="article({id: article._id})" title="{{article.title}}">{{article.title}}</a></h4>
+                    <p class="list-group-item-text"><i class="fa fa-quote-left" aria-hidden="true"></i>&nbsp;&nbsp;{{getSummary(article.content)}}</p>
+                    <p class="list-group-item-text"><i class="fa fa-address-book" aria-hidden="true"></i>&nbsp;&nbsp;<a ui-sref="list({keywords: article.author, page: null})">{{article.author}}</a>&nbsp;&nbsp;发布于 <time>{{article.createdAt | date: "yyyy-MM-dd HH:mm:ss"}}</time></p>
+                    <a ng-click="remove($index)" class="delete-btn">
+                        <i class="fa fa-trash-o fa-lg"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <h2 ng-if="articles.length < 1" class="alert alert-info text-center" role="alert"><i class="fa fa-meh-o fa-fw fa-3x" style="vertical-align: middle;"></i> 没找到相关文章！</h2>
+
+            <!-- Pager -->
+            <pager total="pageTotal"></pager>
+        </div>
+    </div>
+</div>

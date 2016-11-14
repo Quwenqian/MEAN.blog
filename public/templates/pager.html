@@ -1,0 +1,11 @@
+<ul ng-if="total > 1" class="pager">
+    <li class="previous" ng-class="{disabled: prev < 1}">
+        <a ng-if="prev > 0" ui-sref="{page: prev}">上一页</a>
+        <span ng-if="prev < 1">上一页</span>
+    </li>
+    <li ng-if="showNumber" ng-repeat="p in pages" ng-class="{active: p == page}"><a ui-sref="{page: p}">{{p}}</a></li>
+    <li class="next" ng-class="{disabled: next > total}">
+        <a ng-if="next <= total" ui-sref="{page: next}">下一页</a>
+        <span ng-if="next > total">下一页</span>
+    </li>
+</ul>

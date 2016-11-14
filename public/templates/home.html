@@ -1,0 +1,39 @@
+<!-- Page Header -->
+<!-- Set your background image for this header on the line below. -->
+<header class="intro-header" style="background-image: url(/img/home-bg.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>MEAN Blog</h1>
+                    <hr class="small">
+                    <span class="subheading">一个基于MEAN技术栈所编写的简单的博客系统实践</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1" ng-animate-children>
+            <div ng-repeat="article in articles track by article._id" class="post-preview">
+                <a ui-sref="article({id: article._id})">
+                    <h2 class="post-title">
+                        {{article.title}}
+                    </h2>
+                </a>
+                <div ng-bind-html="getSummary(article.content)"></div>
+                <p><a class="text-muted" ui-sref="article({id: article._id})">阅读全文&nbsp;<i class="fa fa-arrow-circle-right fa-lg" aria-hidden="true"></i></a></p>
+                <p class="post-meta"><i class="fa fa-address-book fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;<a ui-sref="list({keywords: article.author})">{{article.author}}</a>&nbsp;&nbsp;发布于 <time>{{article.createdAt | date: "yyyy-MM-dd HH:mm:ss"}}</time></p>
+                <hr>
+            </div>
+
+            <h2 ng-if="articles.length < 1" class="alert alert-info text-center" role="alert"><i class="fa fa-meh-o fa-fw fa-3x" style="vertical-align: middle;"></i> 没找到相关文章！</h2>
+
+            <!-- Pager -->
+            <pager total="pageTotal" show-number="false"></pager>
+        </div>
+    </div>
+</div>
