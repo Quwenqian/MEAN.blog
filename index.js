@@ -11,6 +11,7 @@ const ejs = require("ejs");
 const config = require("./config");
 const routes = require("./routes/routes");
 const app = express();
+const pkg = require("./package.json");
 
 // 导入模板引擎工具中间件
 const helper = require("./helpers/view-helpers");
@@ -36,6 +37,24 @@ app.use(helper());
 // 配置路由
 app.use(routes);
 
-app.listen(config.port, function () {
-    console.log(`App Server listen at http://${config.host}:${config.port}`);
+// 404处理
+app.use(function(req, res, next) {
+    res.status(404).json({error: "Not Found"});
 });
+
+// 错误处理
+app.use(function(err, req, res, next) {
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    console.error(err.stack);
+    res.status(500).json({error: "Internal Server Error"});
+});
+
+/* istanbul ignore next */
+if (!module.parent) {
+    app.listen(config.port, function () {
+        console.log(`${pkg.name} Server Running at http://${config.host}:${config.port}`);
+    });
+}

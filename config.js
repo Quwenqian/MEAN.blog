@@ -1,5 +1,5 @@
 /*!
- * Created on 2016/10/12.
+ * 配置文件
  */
 
 module.exports = {

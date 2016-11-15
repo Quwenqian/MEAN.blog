@@ -1,7 +1,7 @@
 {
-    "name" : "blog",
+    "name" : "MEAN Blog",
     "description" : "A simple blog for MEAN stack practice",
-    "main" : "app.js",
+    "main" : "index.js",
     "authors" : [
         "flyer"
     ],
