@@ -29,8 +29,38 @@ const ArticleSchema = mongoose.Schema({
     }
 });
 
+// 定义已上传资源数据结构
+const UploadedResourceSchema = mongoose.Schema({
+    name: String,
+    size: Number,
+    path: String,
+    url: String,
+    filename: String,
+    mimetype: String,
+    extension: String,
+
+    // 过期时间，单位杪，默认值为7天，小于等于0时永不过期
+    expire: {
+        type: Number,
+        default: 60 * 60 * 24 * 7
+    },
+    description: {
+        type: String,
+        default: ""
+    },
+    referenceCount: {
+        type: Number,
+        default: 0
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 // 定义文章数据模型相关方法：
 ArticleSchema.statics = {
+
     // 获取文章列表
     list (page = 1, pageSize = 10, filter = {}) {
         let skip = page < 1 ? 0 : (page - 1) * pageSize;
@@ -71,7 +101,37 @@ ArticleSchema.statics = {
     del (_id) {
         return this.remove({_id}).exec();
     }
- };
+};
+
+// 定义已上传资源数据模型相关方法
+UploadedResourceSchema.statics = {
+
+    // 获取所有已过期的资源文档
+    getExpired () {
+        return co(function*(_this) {
+            return yield _this.find(function () {
+                return this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000;
+            }).lean().exec();
+        }, this);
+    },
+
+    // 删除所有已过期的资源文档
+    delExpired () {
+        return co(function*(_this) {
+            return yield _this.remove(function () {
+                return this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000;
+            }).lean().exec();
+        }, this);
+    },
+
+    // 按指定的条件递增资源的引用计数
+    referenceIncrement (condition) {
+    },
+
+    // 按指定的条件递减资源的引用计数
+    referenceDecrement (condition) {
+    }
+};
 
 // 创建文章数据模型构造函数
 ArticleSchema.plugin(mai.plugin, "Article");
