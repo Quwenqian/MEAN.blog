@@ -125,11 +125,19 @@ UploadedResourceSchema.statics = {
     },
 
     // 按指定的条件递增资源的引用计数
-    referenceIncrement (condition) {
+    referenceIncrement (condition, setter) {
+        return co(function*(_this) {
+            return yield _this.where(condition).setOptions({ multi: true }).update(setter, function () {
+            }).lean().exec();
+        }, this);
     },
 
     // 按指定的条件递减资源的引用计数
-    referenceDecrement (condition) {
+    referenceDecrement (condition, setter) {
+        return co(function*(_this) {
+            return yield _this.where(condition).setOptions({ multi: true }).update(setter, function () {
+            }).lean().exec();
+        }, this);
     }
 };
 
