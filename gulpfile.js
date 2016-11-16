@@ -9,6 +9,7 @@ const del = require("del");
 const runSequence = require("run-sequence");
 const browserSync = require("browser-sync");
 const gulpLoadPlugins = require("gulp-load-plugins");
+const pkg = require("./package.json");
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -75,7 +76,7 @@ gulp.task("nodemon", (cb) => {
     let started = false;
 
     return $.nodemon({
-        script: "app.js"
+        script: pkg.main
     }).on("start", function () {
         if (!started) {
             cb();

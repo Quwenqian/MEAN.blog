@@ -109,18 +109,14 @@ UploadedResourceSchema.statics = {
     // 获取所有已过期的资源文档
     getExpired () {
         return co(function*(_this) {
-            return yield _this.find(function () {
-                return this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000;
-            }).lean().exec();
+            return yield _this.$where("this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000").lean().exec();
         }, this);
     },
 
     // 删除所有已过期的资源文档
     delExpired () {
         return co(function*(_this) {
-            return yield _this.remove(function () {
-                return this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000;
-            }).lean().exec();
+            return yield _this.$where("this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000").remove().lean().exec();
         }, this);
     },
 
