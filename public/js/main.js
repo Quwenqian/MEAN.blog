@@ -113,7 +113,6 @@ angular.module("blog", ["ngAnimate", "ui.router", "angular-loading-bar"]).config
 
     // 解析Markdown到HTML
     var parseTo = function parseTo(id, md) {
-        console.log(1);
         return editormd.markdownToHTML(id, {
             markdown: md,
             htmlDecode: "style,script|on*",

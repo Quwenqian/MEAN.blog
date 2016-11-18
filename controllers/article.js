@@ -4,17 +4,17 @@
 
 const co = require("co");
 const fs = require("fs");
+const del = require("del");
 const path = require("path");
 const crypto = require("crypto");
 const multer  = require("multer");
 const shortid = require("shortid");
 const config = require("../config");
 const Article = require("../models/article");
+const UploadedResource = Article.UploadedResource;
 
 // 休眠工具函数，用于模拟阻塞
-const sleep = delay => {
-    return new Promise(resolve => setTimeout(resolve, delay));
-};
+const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 // 文件读取Promise包装
 const readFile = filePath => {
@@ -57,6 +57,80 @@ const upload = multer({
         fileSize: 1024 * 1024 * 5
     }
 });
+
+// 创建一条新的上传资源文档
+const createUploadedResource = (file, url, ext) => {
+    let ur = new UploadedResource({
+        name: file.originalname,
+        size: file.size,
+        path: file.path,
+        url: url,
+        filename: file.filename,
+        mimetype: file.mimetype,
+        extension: ext,
+        description: "文章中用户本地上传的图片"
+    });
+    return ur.save();
+};
+
+// 查找资源引用
+const findResourceReference = content => {
+    let ref = /!\[(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*\]\(\s*<?([\s\S]*?)>?(?:\s+['"][\s\S]*?['"])?\s*\)/gi;
+    let http = /^https?:\/\//i;
+    let refs = [];
+    while (true) {
+        let m = ref.exec(content);
+        if (m == null) break;
+        if ( !http.test(m[1]) ) refs.push(m[1]);
+    }
+
+    return [...new Set(refs)];
+};
+
+// 更新引用
+// 更新引用的三种方式逻辑解释：
+// 1.只newContent，oldContent为空时为递增引用操作
+// 2.只传递oldContent，newContent为空时为递减引用操作
+// 3.同时传递newContent与oldContent时将比较差值进行相应的递增与递减操作
+const updateReference = (newContent, oldContent) => {
+    if (!newContent && !oldContent) return;
+
+    let inc = [], dec = [];
+    if (newContent && !oldContent) {
+        inc = findResourceReference(newContent);
+    } else if (!newContent && oldContent) {
+        dec = findResourceReference(oldContent);
+    } else if (newContent && oldContent) {
+        let newRef = findResourceReference(newContent);
+        let oldRef = findResourceReference(oldContent);
+
+        // 过滤出新增的引用
+        inc = newRef.filter(v => oldRef.indexOf(v) === -1);
+
+        // 过滤出删除的引用
+        dec = oldRef.filter(v => newRef.indexOf(v) === -1);
+    }
+
+    return co(function*() {
+        // 递增引用
+        if (inc.length > 0) {
+            yield UploadedResource.referenceIncrement({ url: {$in: inc} });
+        }
+
+        // 递减引用
+        if (dec.length > 0) {
+            yield UploadedResource.referenceDecrement({ url: {$in: dec} });
+        }
+
+        // 删除文件与引用文档
+        let expires = yield UploadedResource.getExpired();
+        expires = expires.map(v => v.path);
+
+        // #!这里可能存在时差问题
+        yield del(expires);
+        yield UploadedResource.delExpired();
+    })
+};
 
 module.exports = {
 
@@ -149,6 +223,7 @@ module.exports = {
         // 保存
         co(function*() {
             let ret = yield article.save();
+            yield updateReference(article.content);
             res.json(ret);
         }).catch((error) => {
             res.status(500).json({error});
@@ -159,6 +234,7 @@ module.exports = {
     remove (req, res, next) {
         co(function*() {
             let ret = yield Article.del(req.params.id);
+            yield updateReference(null, ret.content);
             res.json({});
         }).catch((error) => {
             res.status(500).json({error});
@@ -185,11 +261,17 @@ module.exports = {
                 let file = yield readFile(req.file.path);
                 let md5 = crypto.createHash("md5").update(file).digest("hex");
                 let newName = md5 + ext;
+
                 // 用文件hash值来重命名文件
                 yield rename(req.file.path, req.file.destination + newName);
                 ret.url = "/uploads/" + newName;
+
+                // 创建一个新的资源记录
+                req.file.filename = newName;
+                req.file.path = req.file.destination + newName;
+                yield createUploadedResource(req.file, ret.url, ext.substr(1));
                 res.json(ret);
-            }).catch((error) => {
+            }).catch(error => {
                 ret.success = 0;
                 ret.message = "文件上传失败，" + err;
                 res.status(500).json(ret);

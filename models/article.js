@@ -99,7 +99,7 @@ ArticleSchema.statics = {
 
     // 删除指定ID的文章
     del (_id) {
-        return this.remove({_id}).exec();
+        return this.findOneAndRemove({_id}).exec();
     }
 };
 
@@ -109,30 +109,30 @@ UploadedResourceSchema.statics = {
     // 获取所有已过期的资源文档
     getExpired () {
         return co(function*(_this) {
-            return yield _this.$where("this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000").lean().exec();
+            return yield _this.$where("this.referenceCount < 1 && this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000").exec();
         }, this);
     },
 
     // 删除所有已过期的资源文档
     delExpired () {
         return co(function*(_this) {
-            return yield _this.$where("this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000").remove().lean().exec();
+            return yield _this.$where("this.referenceCount < 1 && this.expire > 0 && Date.now() - this.createdAt >= this.expire * 1000").remove().exec();
         }, this);
     },
 
     // 按指定的条件递增资源的引用计数
-    referenceIncrement (condition, setter) {
+    referenceIncrement (condition) {
         return co(function*(_this) {
-            return yield _this.where(condition).setOptions({ multi: true }).update(setter, function () {
-            }).lean().exec();
+            let setter = { $inc: { referenceCount: 1 } };
+            return yield _this.where(condition).setOptions({ multi: true }).update(setter).exec();
         }, this);
     },
 
     // 按指定的条件递减资源的引用计数
-    referenceDecrement (condition, setter) {
+    referenceDecrement (condition) {
         return co(function*(_this) {
-            return yield _this.where(condition).setOptions({ multi: true }).update(setter, function () {
-            }).lean().exec();
+            let setter = { $inc: { referenceCount: -1 } };
+            return yield _this.where(condition).setOptions({ multi: true }).update(setter).exec();
         }, this);
     }
 };
@@ -140,5 +140,6 @@ UploadedResourceSchema.statics = {
 // 创建文章数据模型构造函数
 ArticleSchema.plugin(mai.plugin, "Article");
 const Article = connection.model("Article", ArticleSchema);
+Article.UploadedResource = mongoose.model("UploadedResource", UploadedResourceSchema);
 
 module.exports = Article;

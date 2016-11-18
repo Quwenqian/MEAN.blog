@@ -112,7 +112,7 @@ angular.module("blog", ["ngAnimate", "ui.router", "angular-loading-bar"])
         let $ret = angular.element("<div></div>");
 
         // 解析Markdown到HTML
-        let parseTo = (id, md) => {console.log(1);
+        let parseTo = (id, md) => {
             return editormd.markdownToHTML(id, {
                 markdown: md,
                 htmlDecode: "style,script|on*",
