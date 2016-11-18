@@ -113,6 +113,7 @@ angular.module("blog", ["ngAnimate", "ui.router", "angular-loading-bar"]).config
 
     // 解析Markdown到HTML
     var parseTo = function parseTo(id, md) {
+        console.log(1);
         return editormd.markdownToHTML(id, {
             markdown: md,
             htmlDecode: "style,script|on*",
@@ -128,7 +129,7 @@ angular.module("blog", ["ngAnimate", "ui.router", "angular-loading-bar"]).config
         }).find('a[href^="#"]').attr("href", function (i, val) {
             // 替换文章中的锚链接为UI-Router生成的链接
             return $state.href("article", { "#": val.substr(1) });
-        });
+        }).end().find("iframe").addClass("embed-responsive-item").wrap('<div class="embed-responsive embed-responsive-16by9" />');
     };
 
     var parse = function parse(md) {
@@ -169,7 +170,7 @@ angular.module("blog", ["ngAnimate", "ui.router", "angular-loading-bar"]).config
             // 第一行将显示文章中找到的第一张图片或嵌入内容（如网络视频）
             // 第二行将显示文章中找到的第一段标题块（h1-h6）
             // 第三行将显示文章中的第一段段落文字（p）
-            $ret.append($temp.find("p:has(img),iframe")[0]);
+            $ret.append($temp.find("p:has(img),.embed-responsive")[0]);
             $ret.append($temp.children(":header")[0]);
             $ret.append($temp.children("p").not(":has(img)")[0]);
 
