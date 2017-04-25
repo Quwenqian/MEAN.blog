@@ -1,5 +1,5 @@
 # MEAN Blog
-### A simple blog for MEAN stack practice
+### 一个用MEAN技术栈实践的简单的博客项目
 
 ---
 
